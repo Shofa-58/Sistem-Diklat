@@ -1,0 +1,25 @@
+.dokumen-card {
+    border-radius: 16px;
+    border: none;
+}
+
+.dokumen_badge {
+    padding: 8px 14px;
+    font-size: 12px;
+    border-radius: 20px;
+}
+
+.dokumen_badge.pending {
+    background-color: gray;
+    color: white;
+}
+
+.dokumen_badge.valid {
+    background-color: green;
+    color: white;
+}
+
+.dokumen_badge.revisi {
+    background-color: red;
+    color: white;
+}

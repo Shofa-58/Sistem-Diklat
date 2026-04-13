@@ -1,0 +1,30 @@
+.card{
+border-radius:12px;
+}
+
+.card h5{
+font-weight:600;
+color:var(--navy);
+}
+
+textarea{
+resize:none;
+}
+
+.table td{
+vertical-align:middle;
+}
+
+.btn-warning{
+background:var(--yellow);
+border:none;
+font-weight:600;
+}
+
+.btn-warning:hover{
+opacity:0.9;
+}
+
+.table-hover tbody tr:hover{
+background:#f3f6fb;
+}

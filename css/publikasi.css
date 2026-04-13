@@ -1,0 +1,38 @@
+.publikasi-page {
+    background: #0d1b2a;
+    color: white;
+    padding-top: 90px;
+}
+
+/* Container spacing */
+.publikasi-page .publikasi-container {
+    max-width: 900px;
+}
+
+/* Hero */
+.publikasi-page .hero-title {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+/* Section Card */
+.publikasi-page .section-card {
+    background: #1b263b;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+/* Section Title */
+.publikasi-page .section-title {
+    color: #ffd60a;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Responsive improvement */
+@media (max-width: 576px) {
+    .publikasi-page .hero-title {
+        font-size: 1.2rem;
+    }
+}

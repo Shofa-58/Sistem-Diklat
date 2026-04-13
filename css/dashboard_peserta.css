@@ -1,0 +1,16 @@
+.card{
+border-radius:12px;
+}
+
+.card h5{
+font-weight:600;
+color:var(--navy);
+}
+
+.table td{
+vertical-align:middle;
+}
+
+.table-hover tbody tr:hover{
+background:#f3f6fb;
+}

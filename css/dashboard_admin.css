@@ -1,0 +1,24 @@
+.status_badge {
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
+.status_badge.calon {
+    background-color: gray;
+}
+
+.status_badge.terverifikasi {
+    background-color: #0d6efd;
+}
+
+.status_badge.peserta {
+    background-color: orange;
+}
+
+.status_badge.lulus {
+    background-color: green;
+}
+
+.status_badge.tidak_lulus {
+    background-color: red;
+}

@@ -1,0 +1,42 @@
+/* admin_biodata.css
+   Dipanggil oleh admin_lihat_biodata.php
+   (sebelumnya bernama admin_lihat_biodata.css — disamakan) */
+
+.biodata-card {
+    border: none;
+    border-radius: 16px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.info-box {
+    background-color: #f8f9fa;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    font-size: 14px;
+    color: #333;
+    min-height: 42px;
+}
+
+.form-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+}
+
+.status_badge {
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.status_badge.calon          { background-color: #6c757d; color: #fff; }
+.status_badge.terverifikasi  { background-color: #0d6efd; color: #fff; }
+.status_badge.peserta        { background-color: #fd7e14; color: #fff; }
+.status_badge.lulus          { background-color: #198754; color: #fff; }
+.status_badge.tidak_lulus    { background-color: #dc3545; color: #fff; }

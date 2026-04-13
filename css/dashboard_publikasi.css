@@ -1,0 +1,53 @@
+/* Page Background */
+.dashboard_publikasi-page {
+    background: #0d1b2a;
+    color: white;
+    padding-top: 100px; /* untuk navbar fixed */
+    min-height: 100vh;
+}
+
+/* Navbar */
+.dashboard_publikasi-page .navbar {
+    background: #001f3f !important;
+}
+
+.dashboard_publikasi-page .logo-navbar {
+    width: 40px;
+}
+
+/* Card Form */
+.dashboard_publikasi-page .card-form {
+    background: #1b263b;
+    padding: 35px;
+    border-radius: 20px;
+}
+
+/* Form Elements */
+.dashboard_publikasi-page .form-control,
+.dashboard_publikasi-page .form-select {
+    background: #0d1b2a;
+    border: 1px solid #415a77;
+    color: white;
+}
+
+.dashboard_publikasi-page .form-control:focus,
+.dashboard_publikasi-page .form-select:focus {
+    background: #0d1b2a;
+    border-color: #ffd60a;
+    color: white;
+    box-shadow: 0 0 0 0.2rem rgba(255, 214, 10, 0.25);
+}
+
+/* Button */
+.dashboard_publikasi-page .btn-primary {
+    background: #ffd60a;
+    border: none;
+    color: black;
+    font-weight: bold;
+    transition: 0.2s ease-in-out;
+}
+
+.dashboard_publikasi-page .btn-primary:hover {
+    background: #ffc300;
+    transform: translateY(-2px);
+}
