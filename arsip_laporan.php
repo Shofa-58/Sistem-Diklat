@@ -217,7 +217,7 @@ $back_label = match($role) {
             <a href="<?php echo $back_link; ?>" class="btn btn-sm btn-outline-light">
                 ← <?php echo $back_label; ?>
             </a>
-            <button type="button" id="btnLogout" class="btn btn-sm btn-outline-danger">Logout</button>
+            <button type="button" id="btnLogout" data-url="logout.php" class="btn btn-sm btn-outline-danger">Logout</button>
         </div>
     </div>
 </nav>
@@ -467,25 +467,6 @@ $back_label = match($role) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
-<script>
-document.getElementById('btnLogout').addEventListener('click', function(e) {
-    e.preventDefault();
-    Swal.fire({
-        title: 'Keluar dari Sistem?',
-        text: "Anda akan mengakhiri sesi. Lanjutkan?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Ya, Logout',
-        cancelButtonText: 'Batal',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = 'logout.php';
-        }
-    })
-});
-</script>
+<script src="js/dashboard.js"></script>
 </body>
 </html>

@@ -320,7 +320,7 @@ $pending_eval = mysqli_fetch_assoc(mysqli_query($conn,
             </li>
         </ul>
         <div class="sidebar-footer">
-            <button type="button" class="btn-logout" id="btnLogout">
+            <button type="button" class="btn-logout" id="btnLogout" data-url="../logout.php">
                 <span>🚪</span> Logout
             </button>
         </div>
@@ -532,51 +532,14 @@ $pending_eval = mysqli_fetch_assoc(mysqli_query($conn,
     </main>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<!-- SweetAlert2 -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
-<script>
-/* Enter di search langsung submit */
-document.querySelector('input[name="q"]')?.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') this.closest('form').submit();
-});
-
-// Sidebar toggle (Mobile)
-const menuToggle = document.getElementById('menuToggle');
-const sidebar = document.getElementById('sidebar');
-
-menuToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-});
-
-// Close sidebar when clicking outside on mobile
-document.addEventListener('click', (e) => {
-    if (window.innerWidth <= 768) {
-        if (!sidebar.contains(e.target) && e.target !== menuToggle) {
-            sidebar.classList.remove('open');
-        }
-    }
-});
-
-// SweetAlert Logout Confirmation
-document.getElementById('btnLogout').addEventListener('click', function(e) {
-    e.preventDefault();
-    Swal.fire({
-        title: 'Keluar dari Sistem?',
-        text: "Anda akan mengakhiri sesi. Lanjutkan?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Ya, Logout',
-        cancelButtonText: 'Batal',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = '../logout.php';
-        }
-    })
-});
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script>
+    /* Enter di search langsung submit */
+    document.querySelector('input[name="q"]')?.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') this.closest('form').submit();
+    });
+    </script>
 </body>
 </html>

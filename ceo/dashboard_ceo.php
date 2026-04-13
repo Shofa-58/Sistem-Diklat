@@ -211,7 +211,7 @@ $riwayat = mysqli_query(
                 </li>
             </ul>
             <div class="sidebar-footer">
-                <button type="button" class="btn-logout" id="btnLogout">
+                <button type="button" class="btn-logout" id="btnLogout" data-url="../logout.php">
                     <span>🚪</span> Logout
                 </button>
             </div>
@@ -467,21 +467,15 @@ $riwayat = mysqli_query(
                                     <div class="stat-box4b">
                                         <div class="stat-n"><?php echo $pct_lulus; ?>%</div>
                                         <div class="stat-lbl">Kelulusan</div>
-                                    </div>
-                                </div>
-
-                                <!-- Progress bar kelulusan -->
+                                                                   <!-- Progress bar kelulusan -->
                                 <?php if ($total_p > 0): ?>
-                                    <div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:16px;
-                        box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-                                        <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;">
-                                            <span style="color:#198754;font-weight:600;">Lulus <?php echo $lulus_p; ?> orang</span>
-                                            <span style="color:#dc3545;font-weight:600;">Tidak Lulus <?php echo $tdk_lulus; ?> orang</span>
+                                    <div style="background:#fff; border-radius:12px; padding:16px; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                                        <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px;">
+                                            <span style="color:#198754; font-weight:600;">Lulus <?php echo $lulus_p; ?> orang</span>
+                                            <span style="color:#dc3545; font-weight:600;">Tidak Lulus <?php echo $tdk_lulus; ?> orang</span>
                                         </div>
-                                        <div style="height:12px;background:#e9ecef;border-radius:6px;overflow:hidden;">
-                                            <div style="height:100%;width:<?php echo $pct_lulus; ?>%;
-                             background:linear-gradient(90deg,#198754,#28a745);border-radius: 6px;">
-                                            </div>
+                                        <div style="height:12px; background:#e9ecef; border-radius:6px; overflow:hidden;">
+                                            <div style="height:100%; width:<?php echo $pct_lulus; ?>%; background:linear-gradient(90deg, #198754, #28a745); border-radius:6px;"></div>
                                         </div>
                                     </div>
                                 <?php endif; ?>
@@ -555,46 +549,8 @@ $riwayat = mysqli_query(
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
-    <script>
-        // Sidebar toggle (Mobile)
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-        });
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth <= 768) {
-                if (!sidebar.contains(e.target) && e.target !== menuToggle) {
-                    sidebar.classList.remove('open');
-                }
-            }
-        });
-
-        // SweetAlert Logout Confirmation
-        document.getElementById('btnLogout').addEventListener('click', function(e) {
-            e.preventDefault();
-            Swal.fire({
-                title: 'Keluar dari Sistem?',
-                text: "Anda akan mengakhiri sesi. Lanjutkan?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Ya, Logout',
-                cancelButtonText: 'Batal',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = '../logout.php';
-                }
-            })
-        });
-    </script>
+    <script src="../js/dashboard.js"></script>
 </body>
 
 </html>

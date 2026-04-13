@@ -157,9 +157,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <nav class="navbar navbar-dark" style="background-color: var(--navy);">
     <div class="container-fluid">
         <span class="navbar-brand fw-bold">Ganti Password</span>
-        <a href="<?php echo $back_link; ?>" class="btn btn-sm btn-outline-warning">
-            ← Kembali
-        </a>
+        <div class="ms-auto d-flex gap-2 align-items-center">
+            <a href="<?php echo $back_link; ?>" class="btn btn-sm btn-outline-warning">
+                ← Kembali
+            </a>
+            <button type="button" id="btnLogout" data-url="logout.php" class="btn btn-sm btn-outline-danger">Logout</button>
+        </div>
     </div>
 </nav>
 
@@ -219,6 +222,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+<script src="js/dashboard.js"></script>
 <script>
 // Toggle show/hide password
 document.getElementById('lihatPassword').addEventListener('change', function () {
@@ -228,7 +235,5 @@ document.getElementById('lihatPassword').addEventListener('change', function () 
     });
 });
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -35,7 +35,7 @@
           <a class="nav-link" href="dashboard_umum.php">Beranda</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="publikasi.php">Publikasi</a>
+          <a class="nav-link" href="publikasi/publikasi.php">Publikasi</a>
         </li>
         <li class="nav-item">
           <a class="nav-link text-warning" href="login.php">Login</a>
