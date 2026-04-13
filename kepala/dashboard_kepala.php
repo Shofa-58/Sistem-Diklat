@@ -143,26 +143,57 @@ if (isset($_GET['ok'])) $pesan_sukses = "Periode berhasil dikonfirmasi selesai. 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/fase4b.css">
+    <link rel="stylesheet" href="../css/dashboard_layout.css">
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark nav4b">
-    <div class="container-fluid">
-        <span class="navbar-brand">🛡️ Kepala Keamanan — Laporan Diklat</span>
-        <div class="ms-auto d-flex gap-2">
-            <a href="../arsip_laporan.php" class="btn btn-sm btn-outline-warning">🗂️ Arsip</a>
-            <a href="../ganti_password.php" class="btn btn-sm btn-outline-light">🔒 Password</a>
-            <a href="../logout.php" class="btn btn-sm btn-outline-danger">Logout</a>
+<div class="dashboard-wrapper">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            🛡️ Ka. Keamanan
         </div>
-    </div>
-</nav>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="dashboard_kepala.php" class="active">
+                    <span>📋</span> Laporan Diklat
+                </a>
+            </li>
+            <li>
+                <a href="../arsip_laporan.php">
+                    <span>🗂️</span> Arsip Laporan
+                </a>
+            </li>
+            <li>
+                <a href="../ganti_password.php">
+                    <span>🔒</span> Ganti Password
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <button type="button" class="btn-logout" id="btnLogout">
+                <span>🚪</span> Logout
+            </button>
+        </div>
+    </aside>
 
-<div class="page-header">
-    <div class="container">
-        <h3>Laporan & Konfirmasi Hasil Diklat</h3>
-        <p>Tinjau laporan penilaian siswa → konfirmasi selesainya periode kegiatan</p>
-    </div>
-</div>
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h1 class="page-title">Konfirmasi Hasil Diklat</h1>
+            </div>
+            <div>
+                <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">
+                    Kepala: <?php echo htmlspecialchars($_SESSION['username']); ?>
+                </span>
+            </div>
+        </header>
+
+        <div class="content-body">
 
 <div class="container pb-5">
 
@@ -439,6 +470,16 @@ if (isset($_GET['ok'])) $pesan_sukses = "Periode berhasil dikonfirmasi selesai. 
 
 </div>
 
+    </div> <!-- End container pb-5 -->
+
+        </div> <!-- End content-body -->
+    </main>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
 <script>
 function previewSurat(input) {
     var txt = document.getElementById('suratText');
@@ -449,6 +490,43 @@ function previewSurat(input) {
         txt.textContent = '✅ ' + f.name + ' (' + (f.size/1024).toFixed(0) + ' KB)';
     }
 }
+
+// Sidebar toggle (Mobile)
+const menuToggle = document.getElementById('menuToggle');
+const sidebar = document.getElementById('sidebar');
+
+menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+});
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768) {
+        if (!sidebar.contains(e.target) && e.target !== menuToggle) {
+            sidebar.classList.remove('open');
+        }
+    }
+});
+
+// SweetAlert Logout Confirmation
+document.getElementById('btnLogout').addEventListener('click', function(e) {
+    e.preventDefault();
+    Swal.fire({
+        title: 'Keluar dari Sistem?',
+        text: "Anda akan mengakhiri sesi. Lanjutkan?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, Logout',
+        cancelButtonText: 'Batal',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = '../logout.php';
+        }
+    })
+});
 </script>
 </body>
 </html>

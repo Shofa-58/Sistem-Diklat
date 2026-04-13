@@ -81,50 +81,26 @@ $current_idx  = array_search($status_now, $status_order);
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/dashboard_layout.css">
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
     <style>
-        body { background: #f0f2f5; font-family: Arial, sans-serif; }
-
-        /* Navbar */
-        .siswa-nav {
-            background: var(--navy);
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .siswa-nav .brand { color: var(--yellow); font-weight: 700; font-size: 16px; }
-        .siswa-nav .nav-btns { display: flex; gap: 8px; }
-        .siswa-nav .nav-btns a {
-            font-size: 12px;
-            padding: 6px 12px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .btn-ganti { background: var(--yellow); color: var(--navy); }
-        .btn-logout { background: #dc354533; color: #dc3545; border: 1px solid #dc354555; }
-
-        /* Container */
-        .siswa-container { max-width: 640px; margin: 0 auto; padding: 16px; }
-
-        /* Card umum */
+        /* Sisa s-card dan timeline styling yang spesifik */
         .s-card {
             background: #fff;
-            border-radius: 14px;
-            padding: 18px 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid var(--gray-border);
         }
         .s-card h6 {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 700;
             color: var(--navy);
-            margin-bottom: 14px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #f0f2f5;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--gray-bg);
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -154,35 +130,38 @@ $current_idx  = array_search($status_now, $status_order);
             display: inline-block;
             background: #dc3545;
             color: #fff;
-            border-radius: 10px;
+            border-radius: 8px;
             padding: 10px 18px;
-            font-weight: 700;
-            font-size: 14px;
+            font-weight: 600;
+            font-size: 13px;
             text-decoration: none;
+            transition: 0.2s;
         }
+        .btn-revisi:hover { background: #bb2d3b; color:#fff; }
 
         /* Profil siswa */
         .profil-header {
             display: flex;
             align-items: center;
-            gap: 14px;
-            margin-bottom: 14px;
+            gap: 15px;
+            margin-bottom: 15px;
         }
         .profil-avatar {
-            width: 52px;
-            height: 52px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
             background: var(--navy);
             color: var(--yellow);
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(13,27,42,0.15);
         }
-        .profil-nama { font-size: 17px; font-weight: 700; color: var(--navy); }
-        .profil-username { font-size: 12px; color: #6c757d; }
+        .profil-nama { font-size: 18px; font-weight: 700; color: var(--navy); }
+        .profil-username { font-size: 13px; color: var(--text-muted); }
 
         /* Timeline status */
         .timeline {
@@ -198,11 +177,11 @@ $current_idx  = array_search($status_now, $status_order);
             top: 0;
             bottom: 0;
             width: 2px;
-            background: #dee2e6;
+            background: var(--gray-border);
         }
         .timeline li {
             position: relative;
-            padding: 0 0 18px 50px;
+            padding: 0 0 20px 50px;
         }
         .timeline li:last-child { padding-bottom: 0; }
         .timeline .step-dot {
@@ -215,25 +194,25 @@ $current_idx  = array_search($status_now, $status_order);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            font-size: 11px;
             z-index: 1;
         }
         .step-dot.done    { background: #198754; color: #fff; }
         .step-dot.current { background: #0d6efd; color: #fff; box-shadow: 0 0 0 3px #cfe2ff; }
-        .step-dot.future  { background: #e9ecef; color: #6c757d; }
+        .step-dot.future  { background: var(--gray-border); color: var(--text-muted); }
         .step-dot.fail    { background: #dc3545; color: #fff; }
 
         .timeline .step-label {
             font-size: 14px;
             font-weight: 700;
             color: var(--navy);
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
-        .timeline .step-label.future { color: #adb5bd; font-weight: 400; }
+        .timeline .step-label.future { color: var(--text-muted); font-weight: 500; }
         .timeline .step-label.current { color: #0d6efd; }
         .timeline .step-desc {
             font-size: 12px;
-            color: #6c757d;
+            color: var(--text-muted);
         }
 
         /* Status badge besar */
@@ -241,11 +220,11 @@ $current_idx  = array_search($status_now, $status_order);
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 18px;
+            padding: 10px 20px;
             border-radius: 50px;
             font-size: 14px;
             font-weight: 700;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
         .big-badge.calon         { background: #e9ecef; color: #495057; }
         .big-badge.terverifikasi  { background: #cfe2ff; color: #084298; }
@@ -254,7 +233,7 @@ $current_idx  = array_search($status_now, $status_order);
         .big-badge.tidak_lulus    { background: #f8d7da; color: #842029; }
 
         /* Dokumen bar */
-        .dok-bar-wrap { height: 8px; background: #e9ecef; border-radius: 4px; margin-bottom: 6px; }
+        .dok-bar-wrap { height: 8px; background: var(--gray-border); border-radius: 4px; margin-bottom: 8px; }
         .dok-bar-fill { height: 100%; border-radius: 4px; background: #198754; transition: width 0.4s; }
 
         /* Info row */
@@ -262,69 +241,113 @@ $current_idx  = array_search($status_now, $status_order);
             display: flex;
             justify-content: space-between;
             font-size: 13px;
-            padding: 6px 0;
-            border-bottom: 1px solid #f0f2f5;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--gray-bg);
         }
         .info-row:last-child { border-bottom: none; }
-        .info-row .info-lbl { color: #6c757d; }
+        .info-row .info-lbl { color: var(--text-muted); }
         .info-row .info-val { font-weight: 600; color: var(--navy); text-align: right; }
 
         /* Nilai grid */
         .nilai-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 14px;
+            gap: 12px;
+            margin-bottom: 15px;
         }
         .nilai-box {
-            background: #f8f9fa;
+            background: var(--gray-bg);
             border-radius: 10px;
-            padding: 12px;
+            padding: 15px 12px;
             text-align: center;
         }
-        .nilai-box .nval { font-size: 24px; font-weight: 800; color: var(--navy); line-height: 1; }
-        .nilai-box .nlbl { font-size: 11px; color: #6c757d; margin-top: 3px; }
+        .nilai-box .nval { font-size: 26px; font-weight: 800; color: var(--navy); line-height: 1; }
+        .nilai-box .nlbl { font-size: 12px; color: var(--text-muted); margin-top: 5px; font-weight:500;}
 
         /* Jadwal */
         .jadwal-item {
             display: flex;
-            gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f2f5;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-bg);
             font-size: 13px;
         }
         .jadwal-item:last-child { border-bottom: none; }
         .jadwal-tanggal {
-            min-width: 80px;
+            min-width: 85px;
             color: var(--navy);
             font-weight: 700;
-            font-size: 12px;
+            font-size: 13px;
         }
-        .jadwal-kegiatan { color: #495057; }
-        .jadwal-ket { font-size: 12px; color: #6c757d; }
+        .jadwal-kegiatan { color: var(--text-main); font-weight: 600; margin-bottom: 2px; }
+        .jadwal-ket { font-size: 12px; color: var(--text-muted); }
 
         /* Empty state */
         .empty-state {
             text-align: center;
-            padding: 30px 20px;
-            color: #6c757d;
+            padding: 40px 20px;
+            color: var(--text-muted);
         }
-        .empty-state .icon { font-size: 40px; margin-bottom: 10px; }
-        .empty-state p { font-size: 13px; margin: 0; }
+        .empty-state .icon { font-size: 45px; margin-bottom: 15px; }
+        .empty-state p { font-size: 14px; margin: 0; line-height: 1.5; }
+
+        /* Khusus kontainer siswa ditaruh rapih di tengah untuk layar lebar */
+        .siswa-content-wrap {
+            max-width: 700px;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="siswa-nav">
-    <span class="brand">🛡️ Gemilang</span>
-    <div class="nav-btns">
-        <a href="../ganti_password.php" class="btn-ganti">Ganti Password</a>
-        <a href="../logout.php" class="btn-logout">Logout</a>
-    </div>
-</nav>
+<div class="dashboard-wrapper">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            🛡️ Gemilang
+        </div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="dashboard_peserta.php" class="active">
+                    <span>🏠</span> Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="../ganti_password.php">
+                    <span>🔑</span> Ganti Password
+                </a>
+            </li>
+            <?php if ($adaRevisi): ?>
+            <li>
+                <a href="revisi_dokumen.php" style="color: #ff6b6b;">
+                    <span>⚠️</span> Revisi Dokumen
+                </a>
+            </li>
+            <?php endif; ?>
+        </ul>
+        <div class="sidebar-footer">
+            <button type="button" class="btn-logout" id="btnLogout">
+                <span>🚪</span> Logout
+            </button>
+        </div>
+    </aside>
 
-<div class="siswa-container">
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h1 class="page-title">Dashboard Siswa</h1>
+            </div>
+            <div>
+                <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">
+                    Halo, <?php echo htmlspecialchars($_SESSION['username']); ?>
+                </span>
+            </div>
+        </header>
+
+        <div class="content-body">
+            <div class="siswa-content-wrap">
 
     <!-- ===== ALERT REVISI ===== -->
     <?php if ($adaRevisi): ?>
@@ -601,11 +624,51 @@ $current_idx  = array_search($status_now, $status_order);
     </div>
     <?php endif; ?>
 
-    <!-- Jarak bawah -->
-    <div style="height:30px;"></div>
-
+    </div> <!-- End siswa-content-wrap -->
+        </div> <!-- End content-body -->
+    </main>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+<script>
+    // Sidebar toggle (Mobile)
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+
+    menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+    });
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768) {
+            if (!sidebar.contains(e.target) && e.target !== menuToggle) {
+                sidebar.classList.remove('open');
+            }
+        }
+    });
+
+    // SweetAlert Logout Confirmation
+    document.getElementById('btnLogout').addEventListener('click', function(e) {
+        e.preventDefault();
+        Swal.fire({
+            title: 'Keluar dari Sistem?',
+            text: "Anda akan mengakhiri sesi. Lanjutkan?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, Logout',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '../logout.php';
+            }
+        })
+    });
+</script>
 </body>
 </html>

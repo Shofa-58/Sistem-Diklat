@@ -152,6 +152,9 @@ $label_map = [
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/revisi_dokumen.css">
+    <link rel="stylesheet" href="../css/dashboard_layout.css">
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
     <style>
         .biodata-section {
             background: #fff;
@@ -188,10 +191,51 @@ $label_map = [
 </head>
 <body>
 
-<nav class="rev-navbar">
-    <a href="dashboard_peserta.php" class="brand">← Kembali</a>
-    <span style="color:#ccc;font-size:13px;">Revisi Data & Dokumen</span>
-</nav>
+<div class="dashboard-wrapper">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            Gemilang 👮
+        </div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="dashboard_peserta.php">
+                    <span>🏠</span> Dashboard Siswa
+                </a>
+            </li>
+            <li>
+                <a href="#" class="active">
+                    <span>📝</span> Revisi Dokumen
+                </a>
+            </li>
+            <li>
+                <a href="../ganti_password.php">
+                    <span>🔒</span> Ganti Password
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <button type="button" class="btn-logout" id="btnLogout">
+                <span>🚪</span> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h1 class="page-title">Revisi Dokumen</h1>
+            </div>
+            <div>
+                <a href="dashboard_peserta.php" class="btn btn-outline-secondary btn-sm" style="border-radius:20px;">
+                    ← Kembali
+                </a>
+            </div>
+        </header>
+
+        <div class="content-body">
 
 <div class="rev-container">
 
@@ -425,6 +469,16 @@ $label_map = [
 
 </div>
 
+</div>
+
+        </div> <!-- End content-body -->
+    </main>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
 <script>
 function previewNamaFile(input, jenis) {
     var el = document.getElementById('preview_' + jenis);
@@ -449,6 +503,43 @@ document.getElementById('formRevisi')?.addEventListener('submit', function() {
     var btn = document.getElementById('btnSubmit');
     btn.disabled    = true;
     btn.textContent = 'Menyimpan... mohon tunggu';
+});
+
+// Sidebar toggle (Mobile)
+const menuToggle = document.getElementById('menuToggle');
+const sidebar = document.getElementById('sidebar');
+
+menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+});
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768) {
+        if (!sidebar.contains(e.target) && e.target !== menuToggle) {
+            sidebar.classList.remove('open');
+        }
+    }
+});
+
+// SweetAlert Logout Confirmation
+document.getElementById('btnLogout').addEventListener('click', function(e) {
+    e.preventDefault();
+    Swal.fire({
+        title: 'Keluar dari Sistem?',
+        text: "Anda akan mengakhiri sesi. Lanjutkan?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, Logout',
+        cancelButtonText: 'Batal',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = '../logout.php';
+        }
+    })
 });
 </script>
 </body>

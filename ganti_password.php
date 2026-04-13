@@ -2,15 +2,27 @@
 session_start();
 include "koneksi.php";
 
-// Hanya siswa yang bisa akses
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'siswa') {
+// Semua role yang login bisa ganti password
+if (!isset($_SESSION['role'])) {
     header("Location: login.php");
     exit;
 }
 
 $id_akun = $_SESSION['id_akun'];
+$role    = $_SESSION['role'];
 $pesan   = '';
 $tipe    = '';
+
+$back_link = match($role) {
+    'siswa'           => 'siswa/dashboard_peserta.php',
+    'admin'           => 'admin/dashboard_admin.php',
+    'ceo'             => 'ceo/dashboard_ceo.php',
+    'kepala_keamanan' => 'kepala/dashboard_kepala.php',
+    'polda'           => 'polda/dashboard_polda.php',
+    'publikasi'       => 'publikasi/dashboard_publikasi.php',
+    default           => 'login.php'
+};
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -145,8 +157,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <nav class="navbar navbar-dark" style="background-color: var(--navy);">
     <div class="container-fluid">
         <span class="navbar-brand fw-bold">Ganti Password</span>
-        <a href="siswa/dashboard_peserta.php" class="btn btn-sm btn-outline-warning">
-            Kembali
+        <a href="<?php echo $back_link; ?>" class="btn btn-sm btn-outline-warning">
+            ← Kembali
         </a>
     </div>
 </nav>

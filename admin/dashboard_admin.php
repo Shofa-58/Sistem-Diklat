@@ -72,9 +72,10 @@ $pending_eval = mysqli_fetch_assoc(mysqli_query($conn,
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/base.css">
-    <link rel="stylesheet" href="../css/dashboard_admin.css">
+    <link rel="stylesheet" href="../css/dashboard_layout.css">
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
     <style>
-        body { background: #f0f2f5; }
 
         /* Navbar */
         .admin-nav { background: var(--navy); }
@@ -282,62 +283,72 @@ $pending_eval = mysqli_fetch_assoc(mysqli_query($conn,
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark admin-nav">
-    <div class="container-fluid">
-        <span class="navbar-brand">⚙️ Admin Gemilang</span>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navAdmin">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navAdmin">
-            <ul class="navbar-nav ms-auto align-items-center gap-2">
-                <li class="nav-item">
-                    <span class="text-muted" style="font-size:13px;">
-                        <?php echo htmlspecialchars($_SESSION['username']); ?>
-                    </span>
-                </li>
-                <li class="nav-item">
-                    <a href="../tambah_akun.php" class="btn btn-sm btn-outline-warning">+ Akun</a>
-                </li>
-                <li class="nav-item">
-                    <a href="../logout.php" class="btn btn-sm btn-outline-danger">Logout</a>
-                </li>
-            </ul>
+<div class="dashboard-wrapper">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            ⚙️ Admin Gemilang
         </div>
-    </div>
-</nav>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="dashboard_admin.php" class="active">
+                    <span>👥</span> Data Peserta
+                </a>
+            </li>
+            <li>
+                <a href="admin_evaluasi.php">
+                    <span>📊</span> Evaluasi Nilai
+                    <?php if ($pending_eval['jml'] > 0): ?>
+                    <span class="notif-dot"><?php echo $pending_eval['jml']; ?></span>
+                    <?php endif; ?>
+                </a>
+            </li>
+            <li>
+                <a href="admin_persiapan_diklat.php">
+                    <span>📅</span> Persiapan Diklat
+                </a>
+            </li>
+            <li>
+                <a href="admin_status_siswa.php">
+                    <span>🔄</span> Kelola Status
+                </a>
+            </li>
+            <li>
+                <a href="../tambah_akun.php">
+                    <span>👤</span> Buat Akun
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <button type="button" class="btn-logout" id="btnLogout">
+                <span>🚪</span> Logout
+            </button>
+        </div>
+    </aside>
 
-<!-- Page header -->
-<div class="page-header">
-    <div class="container-fluid px-4">
-        <h4>Dashboard Admin</h4>
-        <p>Kelola pendaftaran, verifikasi dokumen, dan evaluasi diklat</p>
-    </div>
-</div>
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h1 class="page-title">Data Peserta & Pendaftaran</h1>
+            </div>
+            <div>
+                <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">
+                    Admin: <?php echo htmlspecialchars($_SESSION['username']); ?>
+                </span>
+            </div>
+        </header>
 
-<div class="container-fluid px-4 pb-5">
+        <div class="content-body">
 
-    <!-- Alert evaluasi pending -->
-    <?php if ($pending_eval['jml'] > 0): ?>
-    <div class="alert-eval">
-        ⚠️ Ada <strong><?php echo $pending_eval['jml']; ?> nilai siswa</strong> yang belum dikonfirmasi.
-        <a href="admin_evaluasi.php" style="color:#664d03;font-weight:700;">→ Buka Evaluasi</a>
-    </div>
-    <?php endif; ?>
-
-    <!-- Quick nav -->
-    <div class="quick-nav">
-        <a href="dashboard_admin.php" class="active">👥 Data Peserta</a>
-        <a href="admin_evaluasi.php">
-            📊 Input & Evaluasi Nilai
+            <!-- Alert evaluasi pending -->
             <?php if ($pending_eval['jml'] > 0): ?>
-            <span class="notif-dot"><?php echo $pending_eval['jml']; ?></span>
+            <div class="alert-eval">
+                ⚠️ Ada <strong><?php echo $pending_eval['jml']; ?> nilai siswa</strong> yang belum dikonfirmasi.
+                <a href="admin_evaluasi.php" style="color:#664d03;font-weight:700;">→ Buka Evaluasi</a>
+            </div>
             <?php endif; ?>
-        </a>
-        <a href="admin_persiapan_diklat.php">📅 Persiapan Diklat</a>
-        <a href="admin_status_siswa.php">🔄 Kelola Status</a>
-        <a href="../tambah_akun.php">👤 Buat Akun</a>
-    </div>
 
     <!-- Stat cards -->
     <div class="stat-row">
@@ -517,13 +528,54 @@ $pending_eval = mysqli_fetch_assoc(mysqli_query($conn,
         </div>
     </div>
 
+        </div> <!-- End content-body -->
+    </main>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
 <script>
 /* Enter di search langsung submit */
 document.querySelector('input[name="q"]')?.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') this.closest('form').submit();
+});
+
+// Sidebar toggle (Mobile)
+const menuToggle = document.getElementById('menuToggle');
+const sidebar = document.getElementById('sidebar');
+
+menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+});
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768) {
+        if (!sidebar.contains(e.target) && e.target !== menuToggle) {
+            sidebar.classList.remove('open');
+        }
+    }
+});
+
+// SweetAlert Logout Confirmation
+document.getElementById('btnLogout').addEventListener('click', function(e) {
+    e.preventDefault();
+    Swal.fire({
+        title: 'Keluar dari Sistem?',
+        text: "Anda akan mengakhiri sesi. Lanjutkan?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, Logout',
+        cancelButtonText: 'Batal',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = '../logout.php';
+        }
+    })
 });
 </script>
 </body>

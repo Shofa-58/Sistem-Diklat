@@ -85,20 +85,67 @@ $jadwal = mysqli_query($conn,"
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/admin_persiapan_diklat.css">
+    <link rel="stylesheet" href="../css/dashboard_layout.css">
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: var(--navy);">
-    <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="#">Admin Diklat</a>
-        <div class="ms-auto">
-            <a href="dashboard_admin.php" class="btn btn-sm btn-light me-2">Dashboard</a>
-            <a href="../logout.php" class="btn btn-sm btn-danger">Logout</a>
+<div class="dashboard-wrapper">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            ⚙️ Admin Panel
         </div>
-    </div>
-</nav>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="dashboard_admin.php">
+                    <span>👥</span> Data Siswa
+                </a>
+            </li>
+            <li>
+                <a href="admin_persiapan_diklat.php" class="active">
+                    <span>📅</span> Persiapan Diklat
+                </a>
+            </li>
+            <li>
+                <a href="admin_evaluasi.php">
+                    <span>📝</span> Evaluasi Nilai
+                </a>
+            </li>
+            <li>
+                <a href="../arsip_laporan.php">
+                    <span>🗂️</span> Arsip Laporan
+                </a>
+            </li>
+            <li>
+                <a href="../ganti_password.php">
+                    <span>🔒</span> Ganti Password
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <button type="button" class="btn-logout" id="btnLogout">
+                <span>🚪</span> Logout
+            </button>
+        </div>
+    </aside>
 
-<div class="container mt-4">
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h1 class="page-title">Persiapan Diklat</h1>
+            </div>
+            <div>
+                <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">
+                    Admin: <?php echo htmlspecialchars($_SESSION['username']); ?>
+                </span>
+            </div>
+        </header>
+
+        <div class="content-body">
 
     <div class="row g-4">
 
@@ -259,7 +306,7 @@ $jadwal = mysqli_query($conn,"
                                 </span>
                             </td>
                             <td>
-                                <a href="?hapus_periode=<?php echo $p['id_periode']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus periode ini?');">Hapus</a>
+                                <a href="#" onclick="konfirmasiHapus('?hapus_periode=<?php echo $p['id_periode']; ?>')" class="btn btn-sm btn-danger">Hapus</a>
                             </td>
                         </tr>
                     <?php } ?>
@@ -292,7 +339,7 @@ $jadwal = mysqli_query($conn,"
                             <td><?php echo htmlspecialchars($j['keterangan']); ?></td>
                             <td><?php echo $j['tahun'] . " - G" . $j['gelombang']; ?></td>
                             <td>
-                                <a href="?hapus_jadwal=<?php echo $j['id_jadwal']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin menghapus jadwal ini?');">Hapus</a>
+                                <a href="#" onclick="konfirmasiHapus('?hapus_jadwal=<?php echo $j['id_jadwal']; ?>')" class="btn btn-sm btn-danger">Hapus</a>
                             </td>
                         </tr>
                     <?php } ?>
@@ -302,8 +349,70 @@ $jadwal = mysqli_query($conn,"
         </div>
     </div>
 
+    </div> <!-- End container -->
+
+        </div> <!-- End content-body -->
+    </main>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+<script>
+// Sidebar toggle (Mobile)
+const menuToggle = document.getElementById('menuToggle');
+const sidebar = document.getElementById('sidebar');
+
+menuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+});
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768) {
+        if (!sidebar.contains(e.target) && e.target !== menuToggle) {
+            sidebar.classList.remove('open');
+        }
+    }
+});
+
+// SweetAlert Logout Confirmation
+document.getElementById('btnLogout').addEventListener('click', function(e) {
+    e.preventDefault();
+    Swal.fire({
+        title: 'Keluar dari Sistem?',
+        text: "Anda akan mengakhiri sesi. Lanjutkan?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, Logout',
+        cancelButtonText: 'Batal',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = '../logout.php';
+        }
+    })
+});
+
+function konfirmasiHapus(url) {
+    Swal.fire({
+        title: 'Yakin ingin menghapus?',
+        text: "Data yang dihapus tidak dapat dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = url;
+        }
+    });
+}
+</script>
 </body>
 </html>
