@@ -1,6 +1,8 @@
 <?php
 session_start();
 include "../koneksi.php";
+include "../helpers.php";
+
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'polda') {
     header("Location: ../login.php");
@@ -51,12 +53,14 @@ if (isset($_POST['simpan_laporan'])) {
     if (!empty($_FILES['file_laporan']['name'])) {
         $ext = strtolower(pathinfo($_FILES['file_laporan']['name'], PATHINFO_EXTENSION));
         if (in_array($ext, ['pdf', 'jpg', 'jpeg', 'png'])) {
-            $folder = "../uploads/laporan_polda";
+            $folder_db = "uploads/laporan_polda"; // Path disimpan relatif ke root
+            $folder    = "../" . $folder_db; // Path folder fisik
             if (!is_dir($folder)) mkdir($folder, 0777, true);
             $fname = "laporan_polda_{$id_p}_" . time() . ".$ext";
             if (move_uploaded_file($_FILES['file_laporan']['tmp_name'], "$folder/$fname")) {
-                $file_path = "$folder/$fname";
+                $file_path = "$folder_db/$fname";
             }
+
         } else {
             $pesan_error = "Format file harus PDF, JPG, atau PNG.";
             goto tampilForm;
@@ -293,9 +297,9 @@ if (isset($_GET['ok'])) $pesan_sukses = "Laporan kegiatan berhasil disimpan.";
 
                         <?php if ($laporan_polda && $laporan_polda['file_laporan']): ?>
                         <div class="mb-3">
-                            <a href="<?php echo htmlspecialchars($laporan_polda['file_laporan']); ?>"
+                            <a href="<?php echo fix_path($laporan_polda['file_laporan']); ?>"
                                target="_blank" style="font-size:13px;">
-                               📄 Lihat file laporan yang sudah diupload
+                                📄 Lihat file laporan yang sudah diupload
                             </a>
                         </div>
                         <?php endif; ?>

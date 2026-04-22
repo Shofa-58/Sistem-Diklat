@@ -1,6 +1,8 @@
 <?php
 session_start();
 include "koneksi.php";
+include "helpers.php";
+
 
 /* Akses: kepala keamanan dan CEO bisa lihat arsip */
 if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['kepala_keamanan', 'ceo', 'admin'])) {
@@ -405,10 +407,11 @@ $back_label = match($role) {
                 </span>
 
                 <?php if ($a['file_lpj']): ?>
-                <a href="<?php echo htmlspecialchars($a['file_lpj']); ?>"
+                <a href="<?php echo fix_path($a['file_lpj']); ?>"
                    target="_blank" class="file-btn polda">
                     📄 LPJ Polda
                 </a>
+
                 <?php else: ?>
                 <span class="file-btn missing">📄 LPJ Polda (belum)</span>
                 <?php endif; ?>
@@ -422,10 +425,11 @@ $back_label = match($role) {
                 <?php endif; ?>
 
                 <?php if ($a['file_surat_pernyataan']): ?>
-                <a href="<?php echo htmlspecialchars($a['file_surat_pernyataan']); ?>"
+                <a href="<?php echo fix_path($a['file_surat_pernyataan']); ?>"
                    target="_blank" class="file-btn surat">
                     📝 Surat Pernyataan
                 </a>
+
                 <?php else: ?>
                 <span class="file-btn missing">📝 Surat Pernyataan (belum)</span>
                 <?php endif; ?>

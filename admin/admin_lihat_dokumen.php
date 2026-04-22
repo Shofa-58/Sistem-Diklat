@@ -49,7 +49,33 @@ if (isset($_POST['simpan_semua'])) {
             "UPDATE siswa SET status='terverifikasi', batas_revisi=NULL
              WHERE id_peserta='$id'"
         );
-        $pesan = "Semua dokumen valid. Siswa otomatis terverifikasi.";
+
+        /* ============================================================
+           AUTO-ASSIGN PERIODE (Saat Verifikasi Dokumen)
+           Mendaftarkan siswa ke peserta_periode secara otomatis ke
+           periode pendaftaran yang sesuai dengan waktu daftar mereka.
+           ============================================================ */
+        $q_match = mysqli_query($conn,
+            "SELECT pd.id_periode 
+             FROM periode_diklat pd
+             JOIN informasi_diklat id ON pd.id_periode = id.id_periode
+             JOIN siswa s ON s.id_peserta = '$id'
+             WHERE id.dibuat_pada <= s.created_at 
+               AND pd.tanggal_mulai >= s.created_at
+               AND pd.status = 'pendaftaran'
+             ORDER BY pd.tanggal_mulai ASC
+             LIMIT 1"
+        );
+        if ($row_p = mysqli_fetch_assoc($q_match)) {
+            $id_p_auto = $row_p['id_periode'];
+            mysqli_query($conn,
+                "INSERT IGNORE INTO peserta_periode (id_peserta, id_periode, tanggal_terima)
+                 VALUES ('$id', '$id_p_auto', CURDATE())"
+            );
+        }
+
+        $pesan = "Semua dokumen valid. Siswa otomatis terverifikasi dan masuk ke Gelombang yang sesuai.";
+
 
     } elseif ($revisi > 0) {
 

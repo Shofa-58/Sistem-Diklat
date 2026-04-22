@@ -205,3 +205,21 @@ function emailTemplate(string $nama, string $username, string $password): string
     </html>
     ";
 }
+/* ============================================================
+   FIX PATH
+   Fungsi untuk memastikan path file (uploads) benar baik diakses
+   dari root maupun dari subfolder (admin/, siswa/, dll).
+   ============================================================ */
+function fix_path($path) {
+    if (!$path) return '';
+    // Bersihkan path dari ../ yang ada di awal (jika ada)
+    $clean_path = preg_replace('/^(\.\.\/)+/', '', $path);
+    
+    // Cek apakah script yang memanggil ada di subfolder
+    // Asumsi: subfolder selalu 1 tingkat di bawah root (ex: admin/xxx.php)
+    // Cara cek: lihat apakah ../koneksi.php ada
+    if (file_exists('../koneksi.php')) {
+        return '../' . $clean_path;
+    }
+    return $clean_path;
+}

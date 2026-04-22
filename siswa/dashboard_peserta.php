@@ -1,6 +1,8 @@
 <?php
 session_start();
 include "../koneksi.php";
+include "../helpers.php";
+
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'siswa') {
     header("location: ../login.php");
@@ -24,6 +26,16 @@ $periode = mysqli_fetch_assoc(mysqli_query($conn,
      WHERE pp.id_peserta='$id_siswa'
      ORDER BY pp.created_at DESC LIMIT 1"
 ));
+
+// JIKA BELUM ADA DI peserta_periode, CARI PERIODE AKTIF (Pendaftaran/Berjalan)
+if (!$periode) {
+    $periode = mysqli_fetch_assoc(mysqli_query($conn,
+        "SELECT * FROM periode_diklat 
+         WHERE status IN ('pendaftaran', 'berjalan')
+         ORDER BY tanggal_mulai ASC LIMIT 1"
+    ));
+}
+
 
 /* Jadwal */
 $jadwal = null;
@@ -552,7 +564,7 @@ $current_idx  = array_search($status_now, $status_order);
     </div>
     <?php endif; ?>
 
-    <?php elseif (in_array($siswa['status'], ['peserta','terverifikasi'])): ?>
+    <?php elseif (in_array($siswa['status'], ['peserta','terverifikasi','calon'])): ?>
     <div class="s-card">
         <div class="empty-state">
             <div class="icon">📋</div>

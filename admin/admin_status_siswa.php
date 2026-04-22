@@ -28,7 +28,35 @@ if(isset($_POST['update_status'])){
         mysqli_query($conn,
             "UPDATE siswa SET status='$status_baru' WHERE id_peserta='$id'"
         );
+
+        /* Jika berubah jadi peserta, pastikan masuk ke peserta_periode jika belum */
+        if ($status_baru == 'peserta') {
+            $q_cek = mysqli_query($conn, "SELECT id_peserta FROM peserta_periode WHERE id_peserta='$id'");
+            if (mysqli_num_rows($q_cek) === 0) {
+                // Cari periode yang paling cocok
+                $q_match = mysqli_query($conn,
+                    "SELECT pd.id_periode 
+                     FROM periode_diklat pd
+                     JOIN informasi_diklat id ON pd.id_periode = id.id_periode
+                     JOIN siswa s ON s.id_peserta = '$id'
+                     WHERE id.dibuat_pada <= s.created_at 
+                       AND pd.tanggal_mulai >= s.created_at
+                       AND pd.status = 'pendaftaran'
+                     ORDER BY pd.tanggal_mulai ASC
+                     LIMIT 1"
+                );
+                if ($row_p = mysqli_fetch_assoc($q_match)) {
+                    $id_p_auto = $row_p['id_periode'];
+                    mysqli_query($conn,
+                        "INSERT IGNORE INTO peserta_periode (id_peserta, id_periode, tanggal_terima)
+                         VALUES ('$id', '$id_p_auto', CURDATE())"
+                    );
+                }
+            }
+        }
+
         $pesan = "Status berhasil diperbarui.";
+
     } else {
         $pesan = "Transisi status tidak diperbolehkan!";
     }

@@ -1,6 +1,8 @@
 <?php
 session_start();
 include "../koneksi.php";
+include "../helpers.php";
+
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'kepala_keamanan') {
     header("Location: ../login.php");
@@ -39,12 +41,14 @@ if (isset($_POST['konfirmasi_selesai'])) {
     if (!empty($_FILES['surat_pernyataan']['name'])) {
         $ext = strtolower(pathinfo($_FILES['surat_pernyataan']['name'], PATHINFO_EXTENSION));
         if (in_array($ext, ['pdf','jpg','jpeg','png'])) {
-            $folder = "../uploads/surat_pernyataan";
+            $folder_db = "uploads/surat_pernyataan";
+            $folder    = "../" . $folder_db;
             if (!is_dir($folder)) mkdir($folder, 0777, true);
             $fname = "surat_pernyataan_periode_{$id_p}_" . time() . ".$ext";
             if (move_uploaded_file($_FILES['surat_pernyataan']['tmp_name'], "$folder/$fname")) {
-                $file_surat = "$folder/$fname";
+                $file_surat = "$folder_db/$fname";
             }
+
         }
     }
 
@@ -286,10 +290,11 @@ if (isset($_GET['ok'])) $pesan_sukses = "Periode berhasil dikonfirmasi selesai. 
                     </div>
                     <?php endif; ?>
                     <?php if ($laporan_polda['file_laporan']): ?>
-                    <a href="<?php echo htmlspecialchars($laporan_polda['file_laporan']); ?>"
+                    <a href="<?php echo fix_path($laporan_polda['file_laporan']); ?>"
                        target="_blank" class="btn btn-sm btn-outline-primary w-100" style="border-radius:8px;">
                         📎 Unduh File LPJ
                     </a>
+
                     <?php endif; ?>
                     <?php else: ?>
                     <div class="text-center py-3 text-muted">
@@ -360,10 +365,11 @@ if (isset($_GET['ok'])) $pesan_sukses = "Periode berhasil dikonfirmasi selesai. 
                         Dikonfirmasi pada: <?php echo $laporan['tgl_konfirmasi_kepala']; ?>
                     </p>
                     <?php if ($laporan['file_surat_pernyataan']): ?>
-                    <a href="<?php echo htmlspecialchars($laporan['file_surat_pernyataan']); ?>"
+                    <a href="<?php echo fix_path($laporan['file_surat_pernyataan']); ?>"
                        target="_blank" class="btn btn-sm btn-success w-100" style="border-radius:8px;">
                         📝 Lihat Surat Pernyataan
                     </a>
+
                     <?php endif; ?>
                 </div>
             </div>

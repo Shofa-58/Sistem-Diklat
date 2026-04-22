@@ -8,11 +8,15 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'siswa') {
 }
 
 $id_akun = $_SESSION['id_akun'];
-$siswa   = mysqli_fetch_assoc(mysqli_query($conn,
+$siswa   = mysqli_fetch_assoc(mysqli_query(
+    $conn,
     "SELECT * FROM siswa WHERE id_akun='$id_akun' LIMIT 1"
 ));
 
-if (!$siswa) { header("Location: dashboard_peserta.php"); exit; }
+if (!$siswa) {
+    header("Location: dashboard_peserta.php");
+    exit;
+}
 
 $id_siswa     = $siswa['id_peserta'];
 $batas_revisi = $siswa['batas_revisi'];
@@ -47,7 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_action']) && $_P
     $tinggi_badan  = (int) $_POST['tinggi_badan'];
     $berat_badan   = (int) $_POST['berat_badan'];
 
-    $q_biodata = mysqli_query($conn,
+    $q_biodata = mysqli_query(
+        $conn,
         "UPDATE siswa SET
             nama='$nama', no_telp='$no_telp', alamat='$alamat',
             tgl_lahir='$tgl_lahir', agama='$agama',
@@ -121,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_action']) && $_P
         }
 
         if ($file_info['size'] > 5 * 1024 * 1024) {
-            $debug_info[] = "❌ $field_name: ukuran " . round($file_info['size']/1024) . "KB melebihi 5MB";
+            $debug_info[] = "❌ $field_name: ukuran " . round($file_info['size'] / 1024) . "KB melebihi 5MB";
             $gagal++;
             continue;
         }
@@ -139,14 +144,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_action']) && $_P
             $jenis_esc   = mysqli_real_escape_string($conn, $jenis);
 
             // Cek dulu apakah record dokumen ini ada
-            $cek_dok = mysqli_fetch_assoc(mysqli_query($conn,
+            $cek_dok = mysqli_fetch_assoc(mysqli_query(
+                $conn,
                 "SELECT id_dokumen FROM dokumen_pendaftaran
                  WHERE id_siswa='$id_siswa' AND jenis='$jenis_esc'"
             ));
 
             if ($cek_dok) {
                 // Update dokumen yang sudah ada
-                $q_update = mysqli_query($conn,
+                $q_update = mysqli_query(
+                    $conn,
                     "UPDATE dokumen_pendaftaran
                      SET file_path        = '$db_path_esc',
                          status_verifikasi = 'pending',
@@ -166,7 +173,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_action']) && $_P
                 }
             } else {
                 // Insert dokumen baru jika belum ada record-nya
-                $q_insert = mysqli_query($conn,
+                $q_insert = mysqli_query(
+                    $conn,
                     "INSERT INTO dokumen_pendaftaran
                         (jenis, file_path, status_verifikasi, tgl_upload, tgl_revisi, id_siswa)
                      VALUES
@@ -201,7 +209,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_action']) && $_P
     }
 
     // Reload data setelah update
-    $siswa = mysqli_fetch_assoc(mysqli_query($conn,
+    $siswa = mysqli_fetch_assoc(mysqli_query(
+        $conn,
         "SELECT * FROM siswa WHERE id_peserta='$id_siswa' LIMIT 1"
     ));
 }
@@ -209,14 +218,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_action']) && $_P
 tampilForm:
 
 // Ambil ulang dokumen revisi & semua dokumen
-$query_revisi  = mysqli_query($conn,
+$query_revisi  = mysqli_query(
+    $conn,
     "SELECT * FROM dokumen_pendaftaran
      WHERE id_siswa='$id_siswa' AND status_verifikasi='revisi'
      ORDER BY tgl_upload DESC"
 );
 $jumlah_revisi = mysqli_num_rows($query_revisi);
 
-$semua_dokumen = mysqli_query($conn,
+$semua_dokumen = mysqli_query(
+    $conn,
     "SELECT * FROM dokumen_pendaftaran WHERE id_siswa='$id_siswa' ORDER BY jenis ASC"
 );
 
@@ -231,6 +242,7 @@ $label_map = [
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Revisi Data — Gemilang</title>
@@ -246,390 +258,468 @@ $label_map = [
             border-radius: 14px;
             padding: 18px 16px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
         }
+
         .biodata-section h6 {
-            font-size: 14px; font-weight: 700; color: var(--navy);
-            margin-bottom: 14px; padding-bottom: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 14px;
+            padding-bottom: 8px;
             border-bottom: 2px solid #f0f2f5;
         }
+
         .biodata-section .form-control,
         .biodata-section .form-select {
-            border-radius: 10px; font-size: 14px; border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 14px;
+            border: 2px solid #dee2e6;
         }
+
         .biodata-section .form-control:focus,
         .biodata-section .form-select:focus {
             border-color: var(--navy);
-            box-shadow: 0 0 0 3px rgba(13,27,42,0.10);
+            box-shadow: 0 0 0 3px rgba(13, 27, 42, 0.10);
         }
+
         .dok-status-card {
-            background: #fff; border-radius: 14px; padding: 16px;
-            margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            background: #fff;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
         }
+
         .dok-status-card h6 {
-            font-size: 14px; font-weight: 700; color: var(--navy);
-            margin-bottom: 12px; padding-bottom: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
             border-bottom: 2px solid #f0f2f5;
         }
+
         .dok-status-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 8px 0; border-bottom: 1px solid #f8f9fa; font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f8f9fa;
+            font-size: 13px;
         }
-        .dok-status-item:last-child { border-bottom: none; }
-        .badge-valid   { background:#d1e7dd;color:#0a3622;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700; }
-        .badge-revisi  { background:#f8d7da;color:#842029;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700; }
-        .badge-pending { background:#fff3cd;color:#664d03;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700; }
-        .badge-baru    { background:#cfe2ff;color:#084298;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700; }
+
+        .dok-status-item:last-child {
+            border-bottom: none;
+        }
+
+        .badge-valid {
+            background: #d1e7dd;
+            color: #0a3622;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .badge-revisi {
+            background: #f8d7da;
+            color: #842029;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .badge-pending {
+            background: #fff3cd;
+            color: #664d03;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .badge-baru {
+            background: #cfe2ff;
+            color: #084298;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
         .debug-box {
-            background: #1e1e1e; color: #d4d4d4; border-radius: 10px;
-            padding: 14px 16px; margin-bottom: 16px; font-size: 12px;
-            font-family: monospace; line-height: 1.8;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            font-size: 12px;
+            font-family: monospace;
+            line-height: 1.8;
         }
-        .debug-box .title { color: #ffc107; font-weight: 700; margin-bottom: 8px; display: block; }
+
+        .debug-box .title {
+            color: #ffc107;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: block;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="dashboard-wrapper">
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">Gemilang 👮</div>
-        <ul class="sidebar-menu">
-            <li><a href="dashboard_peserta.php"><span>🏠</span> Dashboard</a></li>
-            <li><a href="revisi_dokumen.php" class="active"><span>📝</span> Revisi Dokumen</a></li>
-            <li><a href="../ganti_password.php"><span>🔒</span> Ganti Password</a></li>
-        </ul>
-        <div class="sidebar-footer">
-            <button type="button" class="btn-logout" id="btnLogout">
-                <span>🚪</span> Logout
-            </button>
-        </div>
-    </aside>
-
-    <main class="main-content">
-        <header class="topbar">
-            <div class="topbar-left">
-                <button class="menu-toggle" id="menuToggle">☰</button>
-                <h1 class="page-title">Revisi Dokumen</h1>
+    <div class="dashboard-wrapper">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">Gemilang 👮</div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard_peserta.php"><span>🏠</span> Dashboard</a></li>
+                <li><a href="revisi_dokumen.php" class="active"><span>📝</span> Revisi Dokumen</a></li>
+                <li><a href="../ganti_password.php"><span>🔒</span> Ganti Password</a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <button type="button" class="btn-logout" id="btnLogout">
+                    <span>🚪</span> Logout
+                </button>
             </div>
-            <div>
-                <a href="dashboard_peserta.php" class="btn btn-outline-secondary btn-sm"
-                   style="border-radius:20px;">← Kembali</a>
-            </div>
-        </header>
+        </aside>
 
-        <div class="content-body">
-<div class="rev-container">
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" id="menuToggle">☰</button>
+                    <h1 class="page-title">Revisi Dokumen</h1>
+                </div>
+                <div>
+                    <a href="dashboard_peserta.php" class="btn btn-outline-secondary btn-sm"
+                        style="border-radius:20px;">← Kembali</a>
+                </div>
+            </header>
 
-    <div class="rev-header-card">
-        <h5>Perbarui data untuk</h5>
-        <p class="siswa-nama"><?php echo htmlspecialchars($siswa['nama']); ?></p>
-    </div>
+            <div class="content-body">
+                <div class="rev-container">
 
-    <!-- Alert sukses -->
-    <?php if ($pesan_sukses): ?>
-    <div class="rev-alert-sukses">✅ <?php echo htmlspecialchars($pesan_sukses); ?></div>
-    <?php endif; ?>
-
-    <!-- Alert error -->
-    <?php if ($pesan_error): ?>
-    <div class="alert alert-danger" style="border-radius:10px;font-size:14px;">
-        ⚠️ <?php echo htmlspecialchars($pesan_error); ?>
-    </div>
-    <?php endif; ?>
-
-    <!-- DEBUG BOX — tampilkan detail proses upload (hapus setelah testing selesai) -->
-    <?php if (!empty($debug_info)): ?>
-    <div class="debug-box">
-        <span class="title">🔧 Debug Info (hapus setelah testing)</span>
-        <?php foreach ($debug_info as $line): ?>
-            <div><?php echo htmlspecialchars($line); ?></div>
-        <?php endforeach; ?>
-    </div>
-    <?php endif; ?>
-
-    <!-- Batas waktu -->
-    <?php if ($batas_revisi): ?>
-        <?php if ($sudah_kadaluarsa): ?>
-        <div class="rev-alert-locked">
-            <div class="lock-icon">🔒</div>
-            <div class="lock-title">Masa Revisi Telah Berakhir</div>
-            <div class="lock-desc">
-                Batas: <strong><?php echo $batas_revisi; ?></strong>. Hubungi admin.
-            </div>
-        </div>
-        <?php else: ?>
-        <div class="rev-alert-deadline">
-            <div class="deadline-title">⏰ Batas Waktu Revisi</div>
-            <div class="deadline-info">
-                Kirim sebelum <strong><?php echo $batas_revisi; ?></strong>.
-                <?php
-                $sisa = (int) round((strtotime($batas_revisi) - strtotime($hari_ini)) / 86400);
-                if ($sisa === 0)     echo "<strong style='color:#dc3545'> Hari ini batas terakhir!</strong>";
-                elseif ($sisa === 1) echo " <strong style='color:#e67e22'>Sisa 1 hari lagi.</strong>";
-                else                 echo " Sisa <strong>$sisa hari</strong> lagi.";
-                ?>
-            </div>
-        </div>
-        <?php endif; ?>
-    <?php endif; ?>
-
-    <!-- STATUS SEMUA DOKUMEN -->
-    <?php
-    mysqli_data_seek($semua_dokumen, 0);
-    if (mysqli_num_rows($semua_dokumen) > 0):
-    ?>
-    <div class="dok-status-card">
-        <h6>📋 Status Semua Dokumen</h6>
-        <?php
-        mysqli_data_seek($semua_dokumen, 0);
-        while ($d = mysqli_fetch_assoc($semua_dokumen)):
-            $baru = in_array($d['jenis'], $dok_diperbarui);
-        ?>
-        <div class="dok-status-item">
-            <span style="font-weight:600;color:var(--navy);">
-                <?php echo $label_map[$d['jenis']] ?? ucfirst($d['jenis']); ?>
-            </span>
-            <?php if ($baru): ?>
-                <span class="badge-baru">🆕 Baru Diupload</span>
-            <?php elseif ($d['status_verifikasi'] === 'valid'): ?>
-                <span class="badge-valid">✅ Valid</span>
-            <?php elseif ($d['status_verifikasi'] === 'revisi'): ?>
-                <span class="badge-revisi">⚠️ Perlu Revisi</span>
-            <?php else: ?>
-                <span class="badge-pending">⏳ Menunggu Verifikasi</span>
-            <?php endif; ?>
-        </div>
-        <?php endwhile; ?>
-    </div>
-    <?php endif; ?>
-
-    <?php if (!$sudah_kadaluarsa): ?>
-
-    <!-- FIX: Gunakan hidden field 'form_action' sebagai penanda POST -->
-    <!-- JANGAN andalkan nama button submit karena bisa hilang saat disabled via JS -->
-    <form method="POST" enctype="multipart/form-data" id="formRevisi">
-        <input type="hidden" name="form_action" value="revisi">
-
-        <!-- BAGIAN 1: BIODATA -->
-        <div class="biodata-section">
-            <h6>📋 Perbarui Biodata</h6>
-            <div class="mb-3">
-                <label class="form-label fw-bold" style="font-size:12px;">Nama Lengkap</label>
-                <input type="text" name="nama" class="form-control"
-                       value="<?php echo htmlspecialchars($siswa['nama']); ?>" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label fw-bold" style="font-size:12px;">Nomor HP</label>
-                <input type="text" name="no_telp" class="form-control"
-                       value="<?php echo htmlspecialchars($siswa['no_telp']); ?>" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label fw-bold" style="font-size:12px;">Alamat</label>
-                <textarea name="alamat" class="form-control" rows="3" required
-                          style="resize:none;"><?php echo htmlspecialchars($siswa['alamat']); ?></textarea>
-            </div>
-            <div class="mb-3">
-                <label class="form-label fw-bold" style="font-size:12px;">Tanggal Lahir</label>
-                <input type="date" name="tgl_lahir" class="form-control"
-                       value="<?php echo $siswa['tgl_lahir']; ?>" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label fw-bold" style="font-size:12px;">Jenis Kelamin</label>
-                <div class="d-flex gap-3 mt-1">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="jenis_kelamin"
-                               value="L" <?php echo $siswa['jenis_kelamin']==='L'?'checked':''; ?> required>
-                        <label class="form-check-label" style="font-size:14px;">Laki-laki</label>
+                    <div class="rev-header-card">
+                        <h5>Perbarui data untuk</h5>
+                        <p class="siswa-nama"><?php echo htmlspecialchars($siswa['nama']); ?></p>
                     </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="jenis_kelamin"
-                               value="P" <?php echo $siswa['jenis_kelamin']==='P'?'checked':''; ?>>
-                        <label class="form-check-label" style="font-size:14px;">Perempuan</label>
-                    </div>
-                </div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label fw-bold" style="font-size:12px;">Agama</label>
-                <select name="agama" class="form-select" required>
-                    <?php foreach (['Islam','Kristen','Katolik','Hindu','Buddha','Konghucu'] as $ag): ?>
-                    <option value="<?php echo $ag; ?>"
-                            <?php echo $siswa['agama']===$ag?'selected':''; ?>>
-                        <?php echo $ag; ?>
-                    </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="row g-2">
-                <div class="col-6">
-                    <label class="form-label fw-bold" style="font-size:12px;">Tinggi (cm)</label>
-                    <input type="number" name="tinggi_badan" class="form-control"
-                           value="<?php echo $siswa['tinggi_badan']; ?>" required>
-                </div>
-                <div class="col-6">
-                    <label class="form-label fw-bold" style="font-size:12px;">Berat (kg)</label>
-                    <input type="number" name="berat_badan" class="form-control"
-                           value="<?php echo $siswa['berat_badan']; ?>" required>
-                </div>
-            </div>
-        </div>
 
-        <!-- BAGIAN 2: DOKUMEN REVISI -->
-        <?php if ($jumlah_revisi > 0): ?>
+                    <!-- Alert sukses -->
+                    <?php if ($pesan_sukses): ?>
+                        <div class="rev-alert-sukses">✅ <?php echo htmlspecialchars($pesan_sukses); ?></div>
+                    <?php endif; ?>
 
-        <div class="rev-panduan">
-            <strong>📎 Upload ulang dokumen yang perlu direvisi</strong>
-            <p style="font-size:12px;margin:6px 0 0;color:#0c5460;">
-                Pilih file baru untuk mengganti. Kosongkan jika tidak ingin mengubah.
-            </p>
-        </div>
+                    <!-- Alert error -->
+                    <?php if ($pesan_error): ?>
+                        <div class="alert alert-danger" style="border-radius:10px;font-size:14px;">
+                            ⚠️ <?php echo htmlspecialchars($pesan_error); ?>
+                        </div>
+                    <?php endif; ?>
 
-        <div class="rev-counter">
-            <span><?php echo $jumlah_revisi; ?></span> dokumen perlu direvisi
-        </div>
+                    <!-- DEBUG BOX — tampilkan detail proses upload (hapus setelah testing selesai) -->
+                    <?php if (!empty($debug_info)): ?>
+                        <div class="debug-box">
+                            <span class="title">🔧 Debug Info (hapus setelah testing)</span>
+                            <?php foreach ($debug_info as $line): ?>
+                                <div><?php echo htmlspecialchars($line); ?></div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
 
-        <?php
-        mysqli_data_seek($query_revisi, 0);
-        while ($dok = mysqli_fetch_assoc($query_revisi)):
-        ?>
-        <div class="rev-dok-card">
-            <div class="rev-dok-jenis">
-                <span class="jenis-nama">
-                    <?php echo $label_map[$dok['jenis']] ?? ucfirst($dok['jenis']); ?>
-                </span>
-                <span class="rev-dok-badge revisi">⚠️ Perlu Revisi</span>
-            </div>
+                    <!-- Batas waktu -->
+                    <?php if ($batas_revisi): ?>
+                        <?php if ($sudah_kadaluarsa): ?>
+                            <div class="rev-alert-locked">
+                                <div class="lock-icon">🔒</div>
+                                <div class="lock-title">Masa Revisi Telah Berakhir</div>
+                                <div class="lock-desc">
+                                    Batas: <strong><?php echo $batas_revisi; ?></strong>. Hubungi admin.
+                                </div>
+                            </div>
+                        <?php else: ?>
+                            <div class="rev-alert-deadline">
+                                <div class="deadline-title">⏰ Batas Waktu Revisi</div>
+                                <div class="deadline-info">
+                                    Kirim sebelum <strong><?php echo $batas_revisi; ?></strong>.
+                                    <?php
+                                    $sisa = (int) round((strtotime($batas_revisi) - strtotime($hari_ini)) / 86400);
+                                    if ($sisa === 0)     echo "<strong style='color:#dc3545'> Hari ini batas terakhir!</strong>";
+                                    elseif ($sisa === 1) echo " <strong style='color:#e67e22'>Sisa 1 hari lagi.</strong>";
+                                    else                 echo " Sisa <strong>$sisa hari</strong> lagi.";
+                                    ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
 
-            <?php if ($dok['catatan_admin']): ?>
-            <div class="rev-catatan-admin">
-                <div class="catatan-label">Catatan Admin</div>
-                <p class="catatan-isi"><?php echo htmlspecialchars($dok['catatan_admin']); ?></p>
-            </div>
-            <?php endif; ?>
+                    <!-- STATUS SEMUA DOKUMEN -->
+                    <?php
+                    mysqli_data_seek($semua_dokumen, 0);
+                    if (mysqli_num_rows($semua_dokumen) > 0):
+                    ?>
+                        <div class="dok-status-card">
+                            <h6>📋 Status Semua Dokumen</h6>
+                            <?php
+                            mysqli_data_seek($semua_dokumen, 0);
+                            while ($d = mysqli_fetch_assoc($semua_dokumen)):
+                                $baru = in_array($d['jenis'], $dok_diperbarui);
+                            ?>
+                                <div class="dok-status-item">
+                                    <span style="font-weight:600;color:var(--navy);">
+                                        <?php echo $label_map[$d['jenis']] ?? ucfirst($d['jenis']); ?>
+                                    </span>
+                                    <?php if ($baru): ?>
+                                        <span class="badge-baru">🆕 Baru Diupload</span>
+                                    <?php elseif ($d['status_verifikasi'] === 'valid'): ?>
+                                        <span class="badge-valid">✅ Valid</span>
+                                    <?php elseif ($d['status_verifikasi'] === 'revisi'): ?>
+                                        <span class="badge-revisi">⚠️ Perlu Revisi</span>
+                                    <?php else: ?>
+                                        <span class="badge-pending">⏳ Menunggu Verifikasi</span>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endwhile; ?>
+                        </div>
+                    <?php endif; ?>
 
-            <div class="rev-file-lama">
-                <span class="file-icon">📄</span>
-                <a href="../<?php echo htmlspecialchars($dok['file_path']); ?>" target="_blank">
-                    Lihat file sebelumnya
-                </a>
-            </div>
+                    <?php if (!$sudah_kadaluarsa): ?>
 
-            <div class="rev-upload-wrap">
-                <label>Upload file baru
-                    (<em><?php echo $label_map[$dok['jenis']] ?? ucfirst($dok['jenis']); ?></em>)
-                </label>
-                <input type="file"
-                       name="file_revisi_<?php echo htmlspecialchars($dok['jenis']); ?>"
-                       accept=".jpg,.jpeg,.png,.pdf"
-                       onchange="previewFile(this, '<?php echo $dok['jenis']; ?>')">
-                <div class="upload-hint">JPG, PNG, PDF · Maks 5MB</div>
-                <div id="preview_<?php echo $dok['jenis']; ?>"
-                     style="display:none;font-size:13px;margin-top:6px;
+                        <!-- FIX: Gunakan hidden field 'form_action' sebagai penanda POST -->
+                        <!-- JANGAN andalkan nama button submit karena bisa hilang saat disabled via JS -->
+                        <form method="POST" enctype="multipart/form-data" id="formRevisi">
+                            <input type="hidden" name="form_action" value="revisi">
+
+                            <!-- BAGIAN 1: BIODATA -->
+                            <div class="biodata-section">
+                                <h6>📋 Perbarui Biodata</h6>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold" style="font-size:12px;">Nama Lengkap</label>
+                                    <input type="text" name="nama" class="form-control"
+                                        value="<?php echo htmlspecialchars($siswa['nama']); ?>" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold" style="font-size:12px;">Nomor HP</label>
+                                    <input type="text" name="no_telp" class="form-control"
+                                        value="<?php echo htmlspecialchars($siswa['no_telp']); ?>" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold" style="font-size:12px;">Alamat</label>
+                                    <textarea name="alamat" class="form-control" rows="3" required
+                                        style="resize:none;"><?php echo htmlspecialchars($siswa['alamat']); ?></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold" style="font-size:12px;">Tanggal Lahir</label>
+                                    <input type="date" name="tgl_lahir" class="form-control"
+                                        value="<?php echo $siswa['tgl_lahir']; ?>" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold" style="font-size:12px;">Jenis Kelamin</label>
+                                    <div class="d-flex gap-3 mt-1">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="jenis_kelamin"
+                                                value="L" <?php echo $siswa['jenis_kelamin'] === 'L' ? 'checked' : ''; ?> required>
+                                            <label class="form-check-label" style="font-size:14px;">Laki-laki</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="jenis_kelamin"
+                                                value="P" <?php echo $siswa['jenis_kelamin'] === 'P' ? 'checked' : ''; ?>>
+                                            <label class="form-check-label" style="font-size:14px;">Perempuan</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold" style="font-size:12px;">Agama</label>
+                                    <select name="agama" class="form-select" required>
+                                        <?php foreach (['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu'] as $ag): ?>
+                                            <option value="<?php echo $ag; ?>"
+                                                <?php echo $siswa['agama'] === $ag ? 'selected' : ''; ?>>
+                                                <?php echo $ag; ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <label class="form-label fw-bold" style="font-size:12px;">Tinggi (cm)</label>
+                                        <input type="number" name="tinggi_badan" class="form-control"
+                                            value="<?php echo $siswa['tinggi_badan']; ?>" required>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label fw-bold" style="font-size:12px;">Berat (kg)</label>
+                                        <input type="number" name="berat_badan" class="form-control"
+                                            value="<?php echo $siswa['berat_badan']; ?>" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- BAGIAN 2: DOKUMEN REVISI -->
+                            <?php if ($jumlah_revisi > 0): ?>
+
+                                <div class="rev-panduan">
+                                    <strong>📎 Upload ulang dokumen yang perlu direvisi</strong>
+                                    <p style="font-size:12px;margin:6px 0 0;color:#0c5460;">
+                                        Pilih file baru untuk mengganti. Kosongkan jika tidak ingin mengubah.
+                                    </p>
+                                </div>
+
+                                <div class="rev-counter">
+                                    <span><?php echo $jumlah_revisi; ?></span> dokumen perlu direvisi
+                                </div>
+
+                                <?php
+                                mysqli_data_seek($query_revisi, 0);
+                                while ($dok = mysqli_fetch_assoc($query_revisi)):
+                                ?>
+                                    <div class="rev-dok-card">
+                                        <div class="rev-dok-jenis">
+                                            <span class="jenis-nama">
+                                                <?php echo $label_map[$dok['jenis']] ?? ucfirst($dok['jenis']); ?>
+                                            </span>
+                                            <span class="rev-dok-badge revisi">⚠️ Perlu Revisi</span>
+                                        </div>
+
+                                        <?php if ($dok['catatan_admin']): ?>
+                                            <div class="rev-catatan-admin">
+                                                <div class="catatan-label">Catatan Admin</div>
+                                                <p class="catatan-isi"><?php echo htmlspecialchars($dok['catatan_admin']); ?></p>
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <div class="rev-file-lama">
+                                            <span class="file-icon">📄</span>
+                                            <a href="../<?php echo htmlspecialchars($dok['file_path']); ?>" target="_blank">
+                                                Lihat file sebelumnya
+                                            </a>
+                                        </div>
+
+                                        <div class="rev-upload-wrap">
+                                            <label>Upload file baru
+                                                (<em><?php echo $label_map[$dok['jenis']] ?? ucfirst($dok['jenis']); ?></em>)
+                                            </label>
+                                            <input type="file"
+                                                name="file_revisi_<?php echo htmlspecialchars($dok['jenis']); ?>"
+                                                accept=".jpg,.jpeg,.png,.pdf"
+                                                onchange="previewFile(this, '<?php echo $dok['jenis']; ?>')">
+                                            <div class="upload-hint">JPG, PNG, PDF · Maks 5MB</div>
+                                            <div id="preview_<?php echo $dok['jenis']; ?>"
+                                                style="display:none;font-size:13px;margin-top:6px;
                             padding:8px;border-radius:8px;"></div>
-            </div>
-        </div>
-        <?php endwhile; ?>
+                                        </div>
+                                    </div>
+                                <?php endwhile; ?>
 
-        <?php else: ?>
-        <div style="background:#d1e7dd;border-radius:12px;padding:16px;
+                            <?php else: ?>
+                                <div style="background:#d1e7dd;border-radius:12px;padding:16px;
                     text-align:center;margin-bottom:20px;">
-            <div style="font-size:28px;margin-bottom:8px;">✅</div>
-            <p style="font-size:14px;color:#0a3622;margin:0;font-weight:600;">
-                Tidak ada dokumen yang perlu direvisi.
-            </p>
-        </div>
-        <?php endif; ?>
+                                    <div style="font-size:28px;margin-bottom:8px;">✅</div>
+                                    <p style="font-size:14px;color:#0a3622;margin:0;font-weight:600;">
+                                        Tidak ada dokumen yang perlu direvisi.
+                                    </p>
+                                </div>
+                            <?php endif; ?>
 
-        <!-- Tombol submit — JANGAN pakai disabled di JS event submit -->
-        <button type="submit" class="rev-btn-submit" id="btnSubmit">
-            💾 Kirim Perubahan
-        </button>
+                            <!-- Tombol submit — JANGAN pakai disabled di JS event submit -->
+                            <button type="submit" class="rev-btn-submit" id="btnSubmit">
+                                💾 Kirim Perubahan
+                            </button>
 
-    </form>
+                        </form>
 
-    <?php else: ?>
-    <!-- Kadaluarsa: read-only -->
-    <?php
-    mysqli_data_seek($query_revisi, 0);
-    while ($dok = mysqli_fetch_assoc($query_revisi)):
-    ?>
-    <div class="rev-dok-card" style="opacity:0.6;">
-        <div class="rev-dok-jenis">
-            <span class="jenis-nama">
-                <?php echo $label_map[$dok['jenis']] ?? ucfirst($dok['jenis']); ?>
-            </span>
-            <span class="rev-dok-badge revisi">🔒 Terkunci</span>
-        </div>
-        <?php if ($dok['catatan_admin']): ?>
-        <div class="rev-catatan-admin">
-            <div class="catatan-label">Catatan Admin</div>
-            <p class="catatan-isi"><?php echo htmlspecialchars($dok['catatan_admin']); ?></p>
-        </div>
-        <?php endif; ?>
+                    <?php else: ?>
+                        <!-- Kadaluarsa: read-only -->
+                        <?php
+                        mysqli_data_seek($query_revisi, 0);
+                        while ($dok = mysqli_fetch_assoc($query_revisi)):
+                        ?>
+                            <div class="rev-dok-card" style="opacity:0.6;">
+                                <div class="rev-dok-jenis">
+                                    <span class="jenis-nama">
+                                        <?php echo $label_map[$dok['jenis']] ?? ucfirst($dok['jenis']); ?>
+                                    </span>
+                                    <span class="rev-dok-badge revisi">🔒 Terkunci</span>
+                                </div>
+                                <?php if ($dok['catatan_admin']): ?>
+                                    <div class="rev-catatan-admin">
+                                        <div class="catatan-label">Catatan Admin</div>
+                                        <p class="catatan-isi"><?php echo htmlspecialchars($dok['catatan_admin']); ?></p>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        <?php endwhile; ?>
+                    <?php endif; ?>
+
+                    <a href="dashboard_peserta.php" class="rev-btn-back" style="margin-top:16px;">
+                        ← Kembali ke Dashboard
+                    </a>
+                    <div style="height:40px;"></div>
+
+                </div>
+            </div>
+        </main>
     </div>
-    <?php endwhile; ?>
-    <?php endif; ?>
 
-    <a href="dashboard_peserta.php" class="rev-btn-back" style="margin-top:16px;">
-        ← Kembali ke Dashboard
-    </a>
-    <div style="height:40px;"></div>
-
-</div>
-        </div>
-    </main>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
-<script>
-function previewFile(input, jenis) {
-    var el = document.getElementById('preview_' + jenis);
-    if (!el) return;
-    if (input.files && input.files[0]) {
-        var f = input.files[0];
-        if (f.size > 5 * 1024 * 1024) {
-            el.style.background = '#f8d7da';
-            el.style.color      = '#842029';
-            el.innerHTML        = '❌ File terlalu besar. Maks 5MB.';
-            el.style.display    = 'block';
-            input.value         = '';
-            return;
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+    <script>
+        function previewFile(input, jenis) {
+            var el = document.getElementById('preview_' + jenis);
+            if (!el) return;
+            if (input.files && input.files[0]) {
+                var f = input.files[0];
+                if (f.size > 5 * 1024 * 1024) {
+                    el.style.background = '#f8d7da';
+                    el.style.color = '#842029';
+                    el.innerHTML = '❌ File terlalu besar. Maks 5MB.';
+                    el.style.display = 'block';
+                    input.value = '';
+                    return;
+                }
+                el.style.background = '#d1e7dd';
+                el.style.color = '#0a3622';
+                el.innerHTML = '✅ ' + f.name + ' (' + (f.size / 1024).toFixed(0) + ' KB) — siap diupload';
+                el.style.display = 'block';
+            }
         }
-        el.style.background = '#d1e7dd';
-        el.style.color      = '#0a3622';
-        el.innerHTML        = '✅ ' + f.name + ' (' + (f.size / 1024).toFixed(0) + ' KB) — siap diupload';
-        el.style.display    = 'block';
-    }
-}
 
-// FIX: Jangan disable button di event submit!
-// Button disabled = nilai button tidak ikut ke POST
-// Cukup ubah teks saja sebagai feedback visual
-document.getElementById('formRevisi')?.addEventListener('submit', function() {
-    var btn = document.getElementById('btnSubmit');
-    if (btn) {
-        // Hanya ubah teks, JANGAN set disabled
-        btn.textContent = '⏳ Menyimpan... mohon tunggu';
-        btn.style.opacity = '0.7';
-        btn.style.cursor  = 'not-allowed';
-    }
-});
+        // FIX: Jangan disable button di event submit!
+        // Button disabled = nilai button tidak ikut ke POST
+        // Cukup ubah teks saja sebagai feedback visual
+        document.getElementById('formRevisi')?.addEventListener('submit', function() {
+            var btn = document.getElementById('btnSubmit');
+            if (btn) {
+                // Hanya ubah teks, JANGAN set disabled
+                btn.textContent = '⏳ Menyimpan... mohon tunggu';
+                btn.style.opacity = '0.7';
+                btn.style.cursor = 'not-allowed';
+            }
+        });
 
-const menuToggle = document.getElementById('menuToggle');
-const sidebar    = document.getElementById('sidebar');
-menuToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
-document.addEventListener('click', (e) => {
-    if (window.innerWidth <= 768 && !sidebar.contains(e.target) && e.target !== menuToggle)
-        sidebar.classList.remove('open');
-});
-document.getElementById('btnLogout').addEventListener('click', function(e) {
-    e.preventDefault();
-    Swal.fire({
-        title:'Keluar dari Sistem?', text:"Anda akan mengakhiri sesi. Lanjutkan?", icon:'warning',
-        showCancelButton:true, confirmButtonColor:'#dc3545', cancelButtonColor:'#6c757d',
-        confirmButtonText:'Ya, Logout', cancelButtonText:'Batal', reverseButtons:true
-    }).then((result) => { if (result.isConfirmed) window.location.href = '../logout.php'; });
-});
-</script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        menuToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && !sidebar.contains(e.target) && e.target !== menuToggle)
+                sidebar.classList.remove('open');
+        });
+        document.getElementById('btnLogout').addEventListener('click', function(e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Keluar dari Sistem?',
+                text: "Anda akan mengakhiri sesi. Lanjutkan?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Ya, Logout',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) window.location.href = '../logout.php';
+            });
+        });
+    </script>
 </body>
+
 </html>

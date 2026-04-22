@@ -1,6 +1,8 @@
 <?php
 session_start();
 include "../koneksi.php";
+include "../helpers.php";
+
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'ceo') {
     header("Location: ../login.php");
@@ -395,10 +397,10 @@ $riwayat = mysqli_query(
                                                 <span style="font-size:12px;"><?php echo $periode['tgl_konfirmasi_kepala']; ?></span>
                                             </div>
                                             <?php if ($periode['file_surat_pernyataan']): ?>
-                                                <a href="<?php echo htmlspecialchars($periode['file_surat_pernyataan']); ?>"
-                                                    target="_blank" class="btn btn-sm btn-success w-100 mt-2" style="border-radius:8px;">
-                                                    📝 Lihat Surat Pernyataan
-                                                </a>
+                                                <a href="<?php echo fix_path($periode['file_surat_pernyataan']); ?>"
+                                                     target="_blank" class="btn btn-sm btn-success w-100 mt-2" style="border-radius:8px;">
+                                                     📝 Lihat Surat Pernyataan
+                                                 </a>
                                             <?php endif; ?>
                                         <?php endif; ?>
                                     </div>
@@ -436,10 +438,10 @@ $riwayat = mysqli_query(
                                                 </div>
                                             </div>
                                             <?php if ($laporan_polda['file_laporan']): ?>
-                                                <a href="<?php echo htmlspecialchars($laporan_polda['file_laporan']); ?>"
-                                                    target="_blank" class="btn btn-sm btn-outline-primary w-100 mt-2" style="border-radius:8px;">
-                                                    📎 Unduh LPJ Polda
-                                                </a>
+                                                <a href="<?php echo fix_path($laporan_polda['file_laporan']); ?>"
+                                                     target="_blank" class="btn btn-sm btn-outline-primary w-100 mt-2" style="border-radius:8px;">
+                                                     📎 Unduh LPJ Polda
+                                                 </a>
                                             <?php endif; ?>
                                         </div>
                                     </div>
