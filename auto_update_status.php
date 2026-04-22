@@ -76,6 +76,31 @@ function autoUpdateStatusPeserta($conn) {
             );
         }
     }
+
+    /* ============================================================
+       STEP 3 (BONUS):
+       Update status periode dari 'pendaftaran' ke 'berjalan'
+       otomatis ketika tanggal_mulai sudah tiba
+       — agar tampilan di dashboard konsisten
+       ============================================================ */
+    mysqli_query($conn,
+        "UPDATE periode_diklat
+         SET status = 'berjalan'
+         WHERE status = 'pendaftaran'
+         AND tanggal_mulai <= '$today'"
+    );
+
+    /* ============================================================
+       STEP 4 (BONUS):
+       Update status periode dari 'berjalan' ke 'selesai'
+       otomatis ketika tanggal_selesai sudah terlewati
+       ============================================================ */
+    mysqli_query($conn,
+        "UPDATE periode_diklat
+         SET status = 'selesai'
+         WHERE status = 'berjalan'
+         AND tanggal_selesai < '$today'"
+    );
 }
 
 /* Jalankan langsung saat file di-include */
