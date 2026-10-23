@@ -1,7 +1,7 @@
 <?php
 session_start();
-include "../koneksi.php";
-include "../auto_update_status.php";
+require_once __DIR__ . "/../koneksi.php";
+require_once __DIR__ . "/../auto_update_status.php";
 
 if(!isset($_SESSION['role']) || $_SESSION['role'] != "admin"){
     header("location:../login.php");

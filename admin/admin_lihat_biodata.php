@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "../koneksi.php";
+require_once __DIR__ . "/../koneksi.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("location: ../login.php");
